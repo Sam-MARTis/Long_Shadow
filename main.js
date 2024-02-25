@@ -40,10 +40,10 @@ class Box {
     };
     this.bottomShadowCorner = this.corners.tL;
     this.topShadowCorner = this.corners.bR;
-    console.log(this.corners);
+    // console.log(this.corners);
   }
   drawSelf() {
-    console.log("Drawing");
+    // console.log("Drawing");
     this.context.fillStyle = "#8AF";
     this.context.beginPath();
     this.context.strokeStyle = "#468";
@@ -68,11 +68,11 @@ class Box {
     // console.log("bottomShadowCorner", this.bottomShadowCorner);
     // console.log("topShadowCorner", this.topShadowCorner);
     this.drawFromCorner(this.bottomShadowCorner,this.topShadowCorner, this.minAngle, this.maxAngle);
-    this.drawFromCorner();
-    console.log("Drawing shadow");
+    // console.log("Drawing shadow");
   }
-  drawFromCorner(bottomCorner, topCorner, minAngle, maxAngle) {
-    let length = Math.max(width, height);
+    drawFromCorner(bottomCorner, topCorner, minAngle, maxAngle) {
+      let maxTrigValue = Math.max(Math.abs(1/Math.sin(minAngle)), Math.abs(1/Math.cos(minAngle)), Math.abs(1/Math.sin(maxAngle)), Math.abs(1/Math.cos(maxAngle)));
+    let length = Math.max(width*maxTrigValue, height*maxTrigValue);
     //   let length = 100
     this.context.beginPath();
     this.context.strokeStyle = "rgba(0,0,0,0.1)";
@@ -102,12 +102,12 @@ class Box {
     this.minAngle = Infinity;
     this.maxAngle = -Infinity;
     Object.values(this.corners).forEach((corner) => {
-      console.log("Corner x: " + corner.x);
-      console.log("Corner y: " + corner.y);
+    //   console.log("Corner x: " + corner.x);
+    //   console.log("Corner y: " + corner.y);
       let delX = corner.x - fromX;
       let delY = fromY - corner.y;
       let angle = Math.atan2(delY, delX);
-      console.log(corner, angle);
+    //   console.log(corner, angle);
       if (angle < this.minAngle) {
         this.minAngle = angle;
         this.bottomShadowCorner = corner;
