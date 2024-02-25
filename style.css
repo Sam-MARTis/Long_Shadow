@@ -1,0 +1,11 @@
+*{
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+#shadowCanvas{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #FEA;
+}
