@@ -145,10 +145,10 @@ class Boxes {
   constructor(context, width, height) {
     this.context = context;
     this.boxes = [];
-    this.width = width;
+    this.width = width * 3;
     this.height = height;
-    this.createBoxes(50);
-    setInterval(() => this.moveBoxes(0.1, 0.1), 10);
+    this.createBoxes(100);
+    // setInterval(() => this.moveBoxes(0.1, 0.1), 10);
   }
 
   createBoxes(n) {
@@ -172,17 +172,35 @@ class Boxes {
     });
   }
   moveBoxes(x, y) {
-    // box.updateShadowCorners(x, y, 0, 0);
-    // this.boxes.forEach((box) => {
-    //   box.moveBox(x, y);
-    //   // this.updateBoxes(e.clientX, e.clientY, 0, 0);
-    //   box.drawSelf()
-    //   // nonMouseMove()
-    // });
-    // this.context.translate(x, y);
+    this.boxes.forEach((box) => {
+      box.moveBox(x, y);
+      // this.updateBoxes(e.clientX, e.clientY, 0, 0);
+      box.drawSelf();
+      // nonMouseMove()
+    });
   }
   animate() {}
 }
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Player here
+*/
 
 class Player {
   constructor(context, x, y) {
@@ -194,21 +212,22 @@ class Player {
     this.prevTime = Date.now();
     window.addEventListener("keydown", (e) => {
       console.log("Keydown");
+      e.preventDefault()
       switch (e.key) {
         case "ArrowUp":
-          this.vy = -0.2;
+          this.vy = -1;
           this.vx = 0;
           break;
         case "ArrowDown":
-          this.vy = 0.2;
+          this.vy = 1;
           this.vx = 0;
           break;
         case "ArrowLeft":
-          this.vx = -0.2;
+          this.vx = -1;
           this.vy = 0;
           break;
         case "ArrowRight":
-          this.vx = 0.2;
+          this.vx = 1;
           this.vy = 0;
           break;
       }
@@ -218,7 +237,7 @@ class Player {
   showPlayer() {
     this.context.fillStyle = "#00F";
     this.context.beginPath();
-    this.context.arc(this.x, this.y, 10, 0, 2 * Math.PI);
+    this.context.arc(width / 2, height / 2, 10, 0, 2 * Math.PI);
     this.context.fill();
   }
   animatePlayer() {
@@ -228,8 +247,13 @@ class Player {
     console.log("Animating");
     let currentTime = Date.now();
     let deltaTime = currentTime - this.prevTime;
-    this.x += (this.vx * deltaTime) / 10000;
-    this.y += (this.vy * deltaTime) / 10000;
+    // this.x += (this.vx * deltaTime) / 10000;
+    // this.y += (this.vy * deltaTime) / 10000;
+
+    allBoxes.moveBoxes(
+      (-this.vx * deltaTime) / 10000,
+      (-this.vy * deltaTime) / 10000
+    );
     requestAnimationFrame(this.animatePlayer.bind(this));
   }
 }
@@ -254,7 +278,7 @@ const playerMove = (x, y) => {
   // mousePosX = e.clientX;
   // mousePosY = e.clientY;
   allBoxes.updateBoxes(x, y, 0, 0);
-}
+};
 
 // setInterval(() => { allBoxes.updateBoxes(mousePosX, mousePosY, 0, 0) }, 100)
 // setInterval(() => { context.clearRect(0, 0, window.innerWidth, window.innerHeight) }, 10)
