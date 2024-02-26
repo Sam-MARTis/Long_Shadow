@@ -48,9 +48,9 @@ class Box {
   }
   drawSelf() {
     // console.log("Drawing");
-    this.context.fillStyle = "#8AF";
+    this.context.fillStyle = "#000";
     this.context.beginPath();
-    this.context.strokeStyle = "#468";
+    this.context.strokeStyle = "#000";
 
     this.context.rect(
       this.cx - this.width / 2,
@@ -117,42 +117,41 @@ class Box {
   updateShadowCorners(fromX, fromY) {
     this.minAngle = Infinity;
     this.maxAngle = -Infinity;
+    this.context.beginPath();
+    let length = Math.max(width, height);
+    let previousCorner = this.corners.bR;
+    let prevX = previousCorner.x;
+    let prevY = previousCorner.y;
     Object.values(this.corners).forEach((corner) => {
       let delX = corner.x - fromX;
       let delY = fromY - corner.y;
-      let angle = Math.atan2(delY, delX);
-      corner.theta = angle;
-      // console.log(corner, angle);
-      // if (corner.theta < this.minAngle) {
-      //   this.minAngle = corner.theta;
-      //   this.bottomShadowCorner = corner;
-      // }
-      // if (corner.theta > this.maxAngle) {
-      //   this.maxAngle = corner.theta;
-      //   this.topShadowCorner = corner;
-      // }
-      // this.pickShadowCorners()
+      let scaleFactor = length/Math.min(Math.abs(delX), Math.abs(delY));
 
 
-
-      this.context.beginPath();
-      Object.values(this.corners).forEach((corner) => {
-        this.context.moveTo(corner.x, corner.y);
-        let angle = corner.theta;
-        let maxTrigFactor = Math.max(1 / Math.sin(angle), 1 / Math.cos(angle));
-        let length = Math.max(width * maxTrigFactor, height * maxTrigFactor);
-        this.context.lineTo(
-          corner.x + Math.abs(Math.cos(angle) * length )* Math.sign(delX),
-          corner.y - Math.abs(Math.sin(angle) * length )* Math.sign(delY)
-        );
+      
+    
+        this.context.lineTo(corner.x, corner.y);
+      this.context.lineTo(
+        corner.x + delX * scaleFactor,
+        corner.y - delY * scaleFactor
+      );
+      this.context.lineTo(prevX, prevY);
         this.context.stroke();
-        // this.context.closePath();
-        this.context.fillStyle = "rgba(0,0,0,1";
-        this.context.fill();
-        this.context.stroke();
-        this.drawSelf();
-      });
+      this.context.closePath();
+      prevX = corner.x + delX * scaleFactor;
+      prevY = corner.y - delY * scaleFactor;
+      this.context.fillStyle = "rgba(255,0,0,0.1)"
+      
+        
+      this.context.fillStyle = "rgba(0,0,0,255)"
+      this.context.fill();
+      previousCorner = corner;
+      this.drawSelf();
+        
     });
+    this.context.closePath();
+    
+  
   }
   pickShadowCorners() {
     let cornerAngles = [];
@@ -222,7 +221,7 @@ class Boxes {
     this.boxes = [];
     this.width = width;
     this.height = height;
-    this.createBoxes(1);
+    this.createBoxes(30);
   }
 
   createBoxes(n) {
