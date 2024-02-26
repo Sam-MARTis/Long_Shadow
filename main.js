@@ -5,6 +5,7 @@ let context;
 let allBoxes;
 let mousePosX;
 let mousePosY;
+let me;
 const setupFunction = () => {
   console.log("Loading canvas");
   globalCanvas = document.getElementById("shadowCanvas");
@@ -19,8 +20,10 @@ const setupFunction = () => {
 
   context = globalCanvas.getContext("2d");
   allBoxes = new Boxes(context, width, height);
+  me = new Player(context, 300, 300);
+  me.showPlayer();
 
-  window.addEventListener("mousemove", handleMouseMove);
+  // window.addEventListener("mousemove", handleMouseMove);
 };
 
 class Box {
@@ -57,10 +60,8 @@ class Box {
       bL: { x: this.cx - this.width / 2, y: this.cy + this.height / 2 },
       bR: { x: this.cx + this.width / 2, y: this.cy + this.height / 2 },
     };
-    
   }
   drawSelf() {
-    
     this.context.fillStyle = "#000";
     this.context.beginPath();
     this.context.strokeStyle = "#000";
@@ -171,49 +172,90 @@ class Boxes {
     });
   }
   moveBoxes(x, y) {
-    
     // box.updateShadowCorners(x, y, 0, 0);
     // this.boxes.forEach((box) => {
-      
     //   box.moveBox(x, y);
     //   // this.updateBoxes(e.clientX, e.clientY, 0, 0);
-      
     //   box.drawSelf()
     //   // nonMouseMove()
     // });
-    
     // this.context.translate(x, y);
-    
-  
   }
-  animate() {
-    
-  }
+  animate() {}
 }
 
+class Player {
+  constructor(context, x, y) {
+    this.context = context;
+    this.x = x;
+    this.y = y;
+    this.vx = 0;
+    this.vy = 0;
+    this.prevTime = Date.now();
+    window.addEventListener("keydown", (e) => {
+      console.log("Keydown");
+      switch (e.key) {
+        case "ArrowUp":
+          this.vy = -0.2;
+          this.vx = 0;
+          break;
+        case "ArrowDown":
+          this.vy = 0.2;
+          this.vx = 0;
+          break;
+        case "ArrowLeft":
+          this.vx = -0.2;
+          this.vy = 0;
+          break;
+        case "ArrowRight":
+          this.vx = 0.2;
+          this.vy = 0;
+          break;
+      }
+    });
+    this.animatePlayer();
+  }
+  showPlayer() {
+    this.context.fillStyle = "#00F";
+    this.context.beginPath();
+    this.context.arc(this.x, this.y, 10, 0, 2 * Math.PI);
+    this.context.fill();
+  }
+  animatePlayer() {
+    playerMove(this.x, this.y, 0, 0);
+    this.showPlayer();
 
-
-
-
-
-
+    console.log("Animating");
+    let currentTime = Date.now();
+    let deltaTime = currentTime - this.prevTime;
+    this.x += (this.vx * deltaTime) / 10000;
+    this.y += (this.vy * deltaTime) / 10000;
+    requestAnimationFrame(this.animatePlayer.bind(this));
+  }
+}
 
 const handleMouseMove = (e) => {
   //   console.log(e);
   context.clearRect(0, 0, window.innerWidth, window.innerHeight);
-  
+
   mousePosX = e.clientX;
   mousePosY = e.clientY;
   allBoxes.updateBoxes(e.clientX, e.clientY, 0, 0);
+  me.showPlayer();
 };
 
 const nonMouseMove = () => {
   context.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
   allBoxes.updateBoxes(mousePosX, mousePosY, 0, 0);
+};
+const playerMove = (x, y) => {
+  context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  // mousePosX = e.clientX;
+  // mousePosY = e.clientY;
+  allBoxes.updateBoxes(x, y, 0, 0);
 }
 
 // setInterval(() => { allBoxes.updateBoxes(mousePosX, mousePosY, 0, 0) }, 100)
 // setInterval(() => { context.clearRect(0, 0, window.innerWidth, window.innerHeight) }, 10)
 window.addEventListener("load", setupFunction);
-
