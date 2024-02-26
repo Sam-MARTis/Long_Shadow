@@ -44,10 +44,8 @@ class Box {
     };
     this.bottomShadowCorner = this.corners.tL;
     this.topShadowCorner = this.corners.bR;
-    // console.log(this.corners);
   }
   drawSelf() {
-    // console.log("Drawing");
     this.context.fillStyle = "#000";
     this.context.beginPath();
     this.context.strokeStyle = "#000";
@@ -67,53 +65,7 @@ class Box {
       this.height
     );
   }
-  drawShadow(fromX, fromY) {
-    this.updateShadowCorners(fromX, fromY);
-    // console.log("bottomShadowCorner", this.bottomShadowCorner);
-    // console.log("topShadowCorner", this.topShadowCorner);
-    // this.drawFromCorner(
-    //   this.bottomShadowCorner,
-    //   this.topShadowCorner,
-    //   this.minAngle,
-    //   this.maxAngle
-    // );
-    // this.updateShadowCorners(fromX, fromY);
-    // console.log("Drawing shadow");
-  }
 
-  // drawFromCorner(bottomCorner, topCorner, minAngle, maxAngle) {
-  //   let maxTrigValue = Math.max(
-  //     Math.abs(1 / Math.sin(minAngle)),
-  //     Math.abs(1 / Math.cos(minAngle)),
-  //     Math.abs(1 / Math.sin(maxAngle)),
-  //     Math.abs(1 / Math.cos(maxAngle))
-  //   );
-  //   let length = Math.max(width * maxTrigValue, height * maxTrigValue);
-  //   //   let length = 100
-  //   this.context.beginPath();
-  //   this.context.strokeStyle = "rgba(0,0,0,0.1)";
-  //   let bottomStartPosX = bottomCorner.x;
-
-  //   let bottomStartPosY = bottomCorner.y;
-  //   let topStartPosX = topCorner.x;
-  //   let topStartPosY = topCorner.y;
-  //   let topEndPosX = topStartPosX + Math.cos(maxAngle) * length;
-  //   let topEndPosY = topStartPosY - Math.sin(maxAngle) * length;
-  //   let bottomEndPosX = bottomStartPosX + Math.cos(minAngle) * length;
-  //   let bottomEndPosY = bottomStartPosY - Math.sin(minAngle) * length;
-
-  //   this.context.moveTo(topStartPosX, topStartPosY);
-  //   this.context.lineTo(bottomStartPosX, bottomStartPosY);
-  //   this.context.lineTo(bottomEndPosX, bottomEndPosY);
-  //   this.context.lineTo(bottomEndPosX, topEndPosY);
-  //   this.context.lineTo(topEndPosX, topEndPosY);
-  //   this.context.lineTo(topStartPosX, topStartPosY);
-  //   this.context.closePath();
-  //   this.context.fillStyle = "rgba(0,0,0,1";
-  //   this.context.fill();
-  //   this.context.stroke();
-  //   this.drawSelf();
-  // }
   updateShadowCorners(fromX, fromY) {
     this.minAngle = Infinity;
     this.maxAngle = -Infinity;
@@ -125,70 +77,26 @@ class Box {
     Object.values(this.corners).forEach((corner) => {
       let delX = corner.x - fromX;
       let delY = fromY - corner.y;
-      let scaleFactor = length/Math.min(Math.abs(delX), Math.abs(delY));
+      let scaleFactor = length / Math.min(Math.abs(delX), Math.abs(delY));
 
-
-      
-    
-        this.context.lineTo(corner.x, corner.y);
+      this.context.lineTo(corner.x, corner.y);
       this.context.lineTo(
         corner.x + delX * scaleFactor,
         corner.y - delY * scaleFactor
       );
       this.context.lineTo(prevX, prevY);
-        this.context.stroke();
+      this.context.stroke();
       this.context.closePath();
       prevX = corner.x + delX * scaleFactor;
       prevY = corner.y - delY * scaleFactor;
-      this.context.fillStyle = "rgba(255,0,0,0.1)"
-      
-        
-      this.context.fillStyle = "rgba(0,0,0,255)"
+      this.context.fillStyle = "rgba(255,0,0,0.1)";
+
+      this.context.fillStyle = "rgba(0,0,0,255)";
       this.context.fill();
       previousCorner = corner;
       this.drawSelf();
-        
     });
     this.context.closePath();
-    
-  
-  }
-  pickShadowCorners() {
-    let cornerAngles = [];
-    Object.values(this.corners).forEach((corner) => {
-      cornerAngles.push(corner.theta);
-    });
-    console.log(Math.min(...cornerAngles), Math.max(...cornerAngles));
-
-    if (Math.max(...cornerAngles) - Math.min(...cornerAngles) < Math.PI/2) {
-      console.log("If statement");
-      this.minAngle = Math.min(...cornerAngles);
-      this.maxAngle = Math.max(...cornerAngles);
-      Object.values(this.corners).forEach((corner) => {
-        if (corner.theta == this.minAngle) {
-          this.bottomShadowCorner = corner;
-        }
-        if (corner.theta == this.maxAngle) {
-          this.topShadowCorner = corner;
-        }
-      });
-    } else {
-      console.log("Else statement");
-      cornerAngles.forEach((angle) => {
-        if (angle < 0) angle = 6.28 - angle;
-      });
-      this.minAngle = Math.min(...cornerAngles);
-      this.maxAngle = Math.max(...cornerAngles);
-      console.log(this.minAngle, this.maxAngle);
-      Object.values(this.corners).forEach((corner) => {
-        if (corner.theta == this.minAngle) {
-          this.bottomShadowCorner = corner;
-        }
-        if (corner.theta == this.maxAngle) {
-          this.topShadowCorner = corner;
-        }
-      });
-    }
   }
 }
 
@@ -241,7 +149,7 @@ class Boxes {
   }
   updateBoxes(x, y) {
     this.boxes.forEach((box) => {
-      box.drawShadow(x, y);
+      box.updateShadowCorners(x, y);
     });
   }
 }
@@ -249,7 +157,5 @@ const handleMouseMove = (e) => {
   //   console.log(e);
   context.clearRect(0, 0, window.innerWidth, window.innerHeight);
   allBoxes.updateBoxes(e.clientX, e.clientY);
-  //   myBox.drawShadow(e.clientX, e.clientY);
-  //   myBox2.drawShadow(e.clientX, e.clientY);
 };
 window.addEventListener("load", setupFunction);
