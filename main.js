@@ -3,6 +3,8 @@ let myBox;
 let myBox2;
 let context;
 let allBoxes;
+let mousePosX;
+let mousePosY;
 const setupFunction = () => {
   console.log("Loading canvas");
   globalCanvas = document.getElementById("shadowCanvas");
@@ -45,7 +47,20 @@ class Box {
     this.bottomShadowCorner = this.corners.tL;
     this.topShadowCorner = this.corners.bR;
   }
+  moveBox(x, y) {
+    console.log("Moving boxes");
+    this.cx += x;
+    this.cy += y;
+    this.corners = {
+      tL: { x: this.cx - this.width / 2, y: this.cy - this.height / 2 },
+      tR: { x: this.cx + this.width / 2, y: this.cy - this.height / 2 },
+      bL: { x: this.cx - this.width / 2, y: this.cy + this.height / 2 },
+      bR: { x: this.cx + this.width / 2, y: this.cy + this.height / 2 },
+    };
+    
+  }
   drawSelf() {
+    
     this.context.fillStyle = "#000";
     this.context.beginPath();
     this.context.strokeStyle = "#000";
@@ -66,7 +81,9 @@ class Box {
     );
   }
 
-  updateShadowCorners(fromX, fromY) {
+  updateShadowCorners(fromX, fromY, camX, camY) {
+    fromX -= camX;
+    fromY -= camY;
     this.minAngle = Infinity;
     this.maxAngle = -Infinity;
     this.context.beginPath();
@@ -129,7 +146,8 @@ class Boxes {
     this.boxes = [];
     this.width = width;
     this.height = height;
-    this.createBoxes(30);
+    this.createBoxes(50);
+    setInterval(() => this.moveBoxes(0.1, 0.1), 10);
   }
 
   createBoxes(n) {
@@ -149,13 +167,53 @@ class Boxes {
   }
   updateBoxes(x, y) {
     this.boxes.forEach((box) => {
-      box.updateShadowCorners(x, y);
+      box.updateShadowCorners(x, y, 0, 0);
     });
   }
+  moveBoxes(x, y) {
+    
+    // box.updateShadowCorners(x, y, 0, 0);
+    // this.boxes.forEach((box) => {
+      
+    //   box.moveBox(x, y);
+    //   // this.updateBoxes(e.clientX, e.clientY, 0, 0);
+      
+    //   box.drawSelf()
+    //   // nonMouseMove()
+    // });
+    
+    // this.context.translate(x, y);
+    
+  
+  }
+  animate() {
+    
+  }
 }
+
+
+
+
+
+
+
+
 const handleMouseMove = (e) => {
   //   console.log(e);
   context.clearRect(0, 0, window.innerWidth, window.innerHeight);
-  allBoxes.updateBoxes(e.clientX, e.clientY);
+  
+  mousePosX = e.clientX;
+  mousePosY = e.clientY;
+  allBoxes.updateBoxes(e.clientX, e.clientY, 0, 0);
 };
+
+const nonMouseMove = () => {
+  context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+  allBoxes.updateBoxes(mousePosX, mousePosY, 0, 0);
+}
+
+// setInterval(() => { allBoxes.updateBoxes(mousePosX, mousePosY, 0, 0) }, 100)
+// setInterval(() => { context.clearRect(0, 0, window.innerWidth, window.innerHeight) }, 10)
 window.addEventListener("load", setupFunction);
+
